@@ -9,6 +9,7 @@ import { axiosInstance } from '../../Api/axios';
 import { ClipLoader } from "react-spinners";
 import { db } from '../../Utility/firebase';
 import { useNavigate } from "react-router-dom";
+import { Type } from '../../Utility/action.type';
 function Payment() {
 
      const [{ user, basket }, dispatch] = useContext(DataContext);
@@ -35,8 +36,7 @@ function Payment() {
 
         try {
           setProcessing(true);
-          
-          
+
           //1. backend || function ---> contact to the client secret
           const response = await axiosInstance({
             method: "POST",
@@ -46,7 +46,7 @@ function Payment() {
           const clientSecret = response.data?.clientSecret;
 
           //2. client side(react side confirmation)
-          const {paymentIntent} = await stripe.confirmCardPayment(
+          const { paymentIntent } = await stripe.confirmCardPayment(
             clientSecret,
             {
               payment_method: {
@@ -68,7 +68,8 @@ function Payment() {
               created: paymentIntent.created,
             });
 
- 
+          // empty the basket
+          dispatch({ type: Type.EMPTY_BASKET });
           setProcessing(false);
 
           Navigate("/orders", { state: { msg: "You Have Placed New Order" } });
