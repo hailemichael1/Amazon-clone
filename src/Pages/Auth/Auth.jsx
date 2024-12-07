@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import styles from "./Signup.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/sign-logo.png";
 import { auth } from "../../Utility/firebase";
 import {
@@ -21,7 +21,7 @@ const Auth = () => {
 
   const [{ user }, dispatch] = useContext(DataContext);
   const navigate = useNavigate();
-
+  const navStateData = useLocation();
   
 
   const authHandler = async (e) => {
@@ -39,7 +39,7 @@ const Auth = () => {
             user: userinfo.user,
           });
           setLoading({ ...loading, SignIn: false });
-          navigate("/");
+          navigate(navStateData?.state?.redirect || "/");
         })
         .catch((err) => {
           setError(err.message);
@@ -54,7 +54,7 @@ const Auth = () => {
             user: userinfo.user,
           });
           setLoading({ ...loading, SignUP: false });
-          navigate("/");
+          navigate(navStateData?.state?.redirect || "/");
         })
         .catch((err) => {
           setError(err.message);
@@ -76,6 +76,18 @@ const Auth = () => {
 
         <div className={styles.login__container}>
           <h1>Sign In</h1>
+          {navStateData?.state?.msg && (
+            <small
+              style={{
+                padding: "5px",
+                textAlign: "center",
+                color: "red",
+                fontWeight: "bold",
+              }}
+            >
+              {navStateData?.state?.msg}
+            </small>
+          )}
           <form action="" className={styles.signUP_Form}>
             <div>
               <label htmlFor="email">Email</label>

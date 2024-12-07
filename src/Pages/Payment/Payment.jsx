@@ -68,8 +68,7 @@ function Payment() {
               created: paymentIntent.created,
             });
 
-         
-
+ 
           setProcessing(false);
 
           Navigate("/orders", { state: { msg: "You Have Placed New Order" } });
