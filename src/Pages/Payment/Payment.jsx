@@ -5,11 +5,15 @@ import { DataContext } from '../../Components/DataProvider/DataProvider';
 import CurrencyFormat from "../../Components/CurrencyFormat/CurrencyFormat";
 import ProductCard from "../../Components/Product/ProductCard"
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { axiosInstance } from '../../Api/axios';
+import { ClipLoader } from "react-spinners";
+import { db } from '../../Utility/firebase';
+import { useNavigate } from "react-router-dom";
 function Payment() {
 
      const [{ user, basket }, dispatch] = useContext(DataContext);
      const [cardError, setCardError] = useState(null);
-
+     const [processing, setProcessing] = useState(false);
 
     const totalItem = basket.reduce((amount, item) => {
       return  item.amount + amount;
@@ -21,10 +25,60 @@ function Payment() {
 
      const stripe = useStripe();
      const elements = useElements();
-
+     const Navigate = useNavigate();
      const handleChange = (e) => {
        e?.error?.message ? setCardError(e?.error?.message) : setCardError("");
      };
+
+      const handlePayment = async (e) => {
+        e.preventDefault();
+
+        try {
+          setProcessing(true);
+          
+          
+          //1. backend || function ---> contact to the client secret
+          const response = await axiosInstance({
+            method: "POST",
+            url: `/payment/create?total=${total * 100}`,
+          });
+
+          const clientSecret = response.data?.clientSecret;
+
+          //2. client side(react side confirmation)
+          const {paymentIntent} = await stripe.confirmCardPayment(
+            clientSecret,
+            {
+              payment_method: {
+                card: elements.getElement(CardElement),
+              },
+            }
+          );
+
+          //3. after the confirmation ---> order firestore database save, clear basket
+
+          await db
+            .collection("users")
+            .doc(user?.uid)
+            .collection("orders")
+            .doc(paymentIntent?.id)
+            .set({
+              basket: basket,
+              amount: paymentIntent.amount,
+              created: paymentIntent.created,
+            });
+
+         
+
+          setProcessing(false);
+
+          Navigate("/orders", { state: { msg: "You Have Placed New Order" } });
+        } catch (error) {
+          console.log(error.message);
+          setProcessing(false);
+        }
+      };
+
   return (
     <Layout>
       {/*header*/}
@@ -36,7 +90,7 @@ function Payment() {
           <h3>Delivery Address</h3>
           <div>
             <div> {user?.email}</div>
-            <div>123 react laen</div>
+            <div>123 react lane</div>
             <div> chicago, ti</div>
           </div>
         </div>
@@ -44,7 +98,7 @@ function Payment() {
 
         {/* products */}
         <div className={styles.payment_flex}>
-          <h3>Review items and Delevery</h3>
+          <h3>Review items and Delivery</h3>
           <div>
             {basket?.map((item) => (
               <ProductCard key={item?.id} product={item} flex={true} />
@@ -58,7 +112,7 @@ function Payment() {
           <h3>Payment Methods</h3>
           <div className={styles.payment_card_container}>
             <div className={styles.payment_details}>
-              <form action="">
+              <form onSubmit={handlePayment}>
                 {/* error */}
                 {cardError && (
                   <small style={{ color: "red" }}>{cardError}</small>
@@ -73,7 +127,16 @@ function Payment() {
                       <p>Total Order | </p> <CurrencyFormat amount={total} />
                     </span>
                   </div>
-                  <button>pey now</button>
+                  <button type="submit">
+                    {processing ? (
+                      <div className={styles.processing}>
+                        <ClipLoader color="grey" size={12} />
+                        <p>Please Wait...</p>
+                      </div>
+                    ) : (
+                      "Pay Now"
+                    )}
+                  </button>
                 </div>
               </form>
             </div>

@@ -62,6 +62,13 @@
   background-color: var(--primary-shade);
 }
 
+.processing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgb(52, 52, 52);
+}
 @media screen and (max-width: 760px) {
   .payment_flex {
     flex-direction: column;
