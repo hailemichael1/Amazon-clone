@@ -5,7 +5,7 @@ export const catagoryData = [
       "Silicon Power 256GB SSD 3D NAND A55 SLC Cache Performance Boost SATA III 2.5",
     price: 109,
     category: "electronics",
-    image: "https://fakestoreapi.com/img/71kWymZ+c+L._AC_SX679_.jpg",
+    image: "https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_.jpg",
     rating: {
       rate: 4.8,
       count: 319,
@@ -40,7 +40,7 @@ export const catagoryData = [
     id: 17,
     title: "Rain Jacket Women Windbreaker Striped Climbing Raincoats",
     price: 39.99,
-   
+
     category: "women's clothing",
     image: "https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2.jpg",
     rating: {
