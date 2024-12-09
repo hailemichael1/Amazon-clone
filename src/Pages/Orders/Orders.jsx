@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import LayOut from "../../Components/Layout/Layout";
 import { db } from "../../Utility/firebase"
 import { DataContext } from "../../Components/DataProvider/DataProvider";
-import styles from "./orders.module.css";
+import styles from "./Orders.module.css";
 import ProductCard from "../../Components/Product/ProductCard";
 
 function Orders() {
