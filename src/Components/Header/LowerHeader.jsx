@@ -12,7 +12,7 @@ function LowerHeader() {
         </li>
         <li>Today's Deals</li>
         <li>Customer Services</li>
-        <li>Resgistry</li>
+        <li>Registry</li>
         <li>Gift Card</li>
         <li>Sell</li>
       </ul>
