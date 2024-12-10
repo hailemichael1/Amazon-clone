@@ -1,5 +1,3 @@
-# React + Vite
-
 # Amazon Clone
 
 ## Description
